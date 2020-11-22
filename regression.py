@@ -7,7 +7,16 @@ import sys
 
 TRAIN_DATA_URL = "https://storage.googleapis.com/kubric-hiring/linreg_train.csv"
 TEST_DATA_URL = "https://storage.googleapis.com/kubric-hiring/linreg_test.csv"
-
+response = requests.get(TRAIN_DATA_URL)
+with open('train_area.csv', 'w') as file:
+    file.write(response.content.decode('utf-8')[5:2753])
+with open('train_price.csv', 'w') as file:
+    file.write(response.content.decode('utf-8')[2759:])
+y = numpy.array(pandas.read_csv('train_price.csv').columns)
+x = numpy.array(pandas.read_csv('train_area.csv').columns)
+x = numpy.array(list(map(float, x)))
+y = numpy.array(list(map(float, y)))
+slope, intercept, _, _, _ = stats.linregress(x, y)
 
 def predict_price(area) -> float:
     """
@@ -15,10 +24,10 @@ def predict_price(area) -> float:
 
     You can run this program from the command line using `python3 regression.py`.
     """
-    response = requests.get(TRAIN_DATA_URL)
+    
     # YOUR IMPLEMENTATION HERE
     ...
-
+    return intercept + slope * area
 
 if __name__ == "__main__":
     # DO NOT CHANGE THE FOLLOWING CODE
